@@ -63,6 +63,26 @@ std::string TrojanMap::GetID(const std::string& name) {
  */
 std::pair<double, double> TrojanMap::GetPosition(std::string name) {
   std::pair<double, double> results(-1, -1);
+
+  if(name == "") { //if empty name then return empty 
+    return results;
+  }
+  bool found = false;
+  for (auto it = data.begin(); it != data.end() && !found; ++it)
+  {
+    std::string currStr = it->second.name;
+
+    //set both input and currStr to lowercase
+    // std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+    // std::transform(currStr.begin(), currStr.end(), currStr.begin(), ::tolower);
+
+    if (name.compare(currStr) == 0)
+    { //check if input name matches currentMap name
+      results.first = it->second.lat;
+      results.second = it->second.lon;
+      found = true;
+    }
+  }
   return results;
 }
 
