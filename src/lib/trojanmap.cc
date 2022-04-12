@@ -75,8 +75,8 @@ std::pair<double, double> TrojanMap::GetPosition(std::string name) {
   {
     std::string current = it->second.name;
 
-    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-    std::transform(current.begin(), current.end(), current.begin(), ::tolower);
+    // std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+    // std::transform(current.begin(), current.end(), current.begin(), ::tolower);
     
     if (name.compare(current) == 0)
     { //check if input name matches currentMap name
@@ -141,8 +141,8 @@ std::string TrojanMap::FindClosestName(std::string name) {
   {
     std::string current = it->second.name;
 
-    // std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-    // std::transform(current.begin(), current.end(), current.begin(), ::tolower);
+    std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+    std::transform(current.begin(), current.end(), current.begin(), ::tolower);
     
     if (TrojanMap::CalculateEditDistance(name, current) <= min_dis)
     { //check if input name matches currentMap name
