@@ -140,14 +140,15 @@ std::string TrojanMap::FindClosestName(std::string name) {
   for (auto it = data.begin(); it != data.end() && !find_location; ++it)
   {
     std::string current = it->second.name;
+    std::string curr_1 = current;
 
     std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-    std::transform(current.begin(), current.end(), current.begin(), ::tolower);
+    std::transform(curr_1.begin(), curr_1.end(), curr_1.begin(), ::tolower);
     
-    if (TrojanMap::CalculateEditDistance(name, current) <= min_dis)
+    if (TrojanMap::CalculateEditDistance(name, curr_1) <= min_dis)
     { //check if input name matches currentMap name
       tmp = current;
-      min_dis = TrojanMap::CalculateEditDistance(name, current);
+      min_dis = TrojanMap::CalculateEditDistance(name, curr_1);
     }
   }
 
