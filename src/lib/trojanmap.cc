@@ -321,10 +321,79 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
  */
 std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
     std::string location1_name, std::string location2_name){
+  // std::vector<std::string> path;
+  // return path;
+
+  std::string src_id, dest_id;
+  for(auto node: data) {
+    if(node.second.name == location1_name)
+    {
+      src_id = node.first;
+    }
+    if(node.second.name == location2_name)
+    {
+      dest_id = node.first;
+    }
+  }
+  Node node1 = data[src_id];
+  Node node2 = data[dest_id];
+  if(node1.id=="" || node2.id=="") return {};
+  if(node1.id == node2.id) return {node1.id};
+
+  std::unordered_map<std::string,double> weights_matrix; //Weights Map
+  std::unordered_map<std::string,double> distance_To;
+  std::unordered_map<std::string,std::string> Parent_Node;
+
+  distance_To[node1.id] = 0;
+  bool changed = true;
+  int time = 0;
+  while(changed && time<data.size()-1){
+    time++;
+    changed = false;
+    for(auto &node_dist:distance_To){
+      Node curr_node = data[node_dist.first];
+      for(std::string &adj : curr_node.neighbors){
+        if(data.count(adj) == 0)
+          continue; // In case there is no such Node, invalid data point
+
+        // Generate key for the Link Weight Map
+        std::string weight_map_key = curr_node.id;
+        weight_map_key.append(",");
+        weight_map_key.append(adj);
+
+        if(weights_matrix.count(weight_map_key)==0){
+          // Generate another key for the Link Weight Map
+          std::string key_alt = adj;
+          key_alt.append(",");
+          key_alt.append(curr_node.id);
+          weights_matrix[weight_map_key] = CalculateDistance(curr_node.id, data[adj].id);
+          weights_matrix[key_alt] = weights_matrix[weight_map_key];
+        }
+
+        if(distance_To.count(adj)==0 || distance_To[adj] > weights_matrix[weight_map_key]+distance_To[curr_node.id] ){
+          distance_To[adj] = weights_matrix[weight_map_key] + distance_To[curr_node.id];
+          Parent_Node[adj] = curr_node.id;
+          changed = true;
+        }
+      }
+    }
+  }
+  
+  if(Parent_Node.count(node2.id)==0)  return {};
+
   std::vector<std::string> path;
+  std::string id_pointer = node2.id;
+  while(id_pointer!=node1.id){
+    path.push_back(id_pointer);
+    id_pointer = Parent_Node[id_pointer];
+  }
+  path.push_back(id_pointer);
+
+  std::reverse(path.begin(), path.end());
   return path;
   
 }
+
 
 /**
  * Travelling salesman problem: Given a list of locations, return the shortest
