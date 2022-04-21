@@ -155,10 +155,6 @@ std::string TrojanMap::FindClosestName(std::string name) {
     }
   }
 
-  // for (auto i:Autocomplete(name)){
-  // TrojanMap::CalculateEditDistance(name);
-  //   tmp.push_back(i);
-  // }
   return tmp;
 }
 
@@ -472,17 +468,14 @@ bool TrojanMap::inSquare(std::string id, std::vector<double> &square) {
 
   min_lon = square[2];
   max_lon = square[3];
-for (auto it = data.begin(); it != data.end(); ++it)
-  {
-    if (it->second.id == id){
-  double current_lat = it->second.lat;
-    double current_lon = it->second.lon;
+
+  double current_lat = data[id].lat;
+  double current_lon = data[id].lon;
     
 
-  if ( (current_lat>=min_lat && current_lat<=max_lat ) && (current_lon>=min_lon && current_lon<=max_lon) )
+  if ( (current_lon>=min_lat && current_lon<=max_lat ) && (current_lat<=min_lon && current_lat>=max_lon) )
       return true;
-      }
-}
+      
   return false;
 }
 
@@ -496,27 +489,29 @@ std::vector<std::string> TrojanMap::GetSubgraph(std::vector<double> &square) {
   // include all the nodes in subgraph
   std::vector<std::string> subgraph;
 
-  double min_lat, max_lat, min_lon, max_lon;
-
-  min_lat = square[0];
-  max_lat = square[1];
-
-  min_lon = square[2];
-  max_lon = square[3];
-
   for (auto it = data.begin(); it != data.end(); ++it)
   {
-    double current_lat = it->second.lat;
-    double current_lon = it->second.lon;
+    auto current_id = it->first;
 
-    if ((current_lat>=min_lat && current_lat<=max_lat ) && (current_lon<=min_lon && current_lon>=max_lon) )
-      subgraph.push_back(it->second.id);
-    
+    if( inSquare(current_id, square)){
+      subgraph.push_back(current_id);
+    }
   }
   
   return subgraph;
 }
-
+bool TrojanMap::CycleDetection_helper(const std::string &currID,std::unordered_map<std::string,int> &seen,const std::string &parentID){
+  seen[currID] = 1;
+  Node curr_Node = data[currID];
+  for(std::string &adj:curr_Node.neighbors){
+    if(data.count(adj) == 0 || seen.count(adj)==0 || adj==parentID)
+      continue; 
+    if(seen[adj]==1 || (seen[adj]==0 && CycleDetection_helper(adj,seen,currID)))
+      return true;
+  }
+  seen[currID] = 2;
+  return false;
+}
 /**
  * Cycle Detection: Given four points of the square-shape subgraph, return true if there
  * is a cycle path inside the square, false otherwise.
@@ -526,10 +521,18 @@ std::vector<std::string> TrojanMap::GetSubgraph(std::vector<double> &square) {
  * @return {bool}: whether there is a cycle or not
  */
 bool TrojanMap::CycleDetection(std::vector<std::string> &subgraph, std::vector<double> &square) {
+  if(square.size()<4) return false;
 
-  
-   
+  std::unordered_map<std::string,int> seen;
+  for(auto &point:subgraph){
+    seen[point] = 0;
+  }
+  for(auto &point:seen){
+    if(point.second==0 && CycleDetection_helper(point.first,seen,""))
+      return true;
+  }
   return false;
+
 }
 
 /**

@@ -125,6 +125,7 @@ class TrojanMap {
   std::vector<std::string> FindNearby(std::string, std::string, double, int);
   
   //----------------------------------------------------- User-defined functions
+bool CycleDetection_helper(const std::string &currID,std::unordered_map<std::string,int> &seen,const std::string &parentID);
 
 };
 

@@ -234,3 +234,26 @@ TEST(TrojanMapTest, CalculateShortestPath_Bellman_Ford) {
   EXPECT_EQ(path2, gt2);
 }
 
+
+// Test cycle detection function
+TEST(TrojanMapTest, CycleDetection) {
+  TrojanMap m;
+  
+  // Test case 1
+  std::vector<double> square1 = {-118.288, -118.250, 34.035, 34.005};
+  auto sub1 = m.GetSubgraph(square1);
+  bool result1 = m.CycleDetection(sub1, square1);
+  EXPECT_EQ(result1, true);
+
+  // Test case 2
+  std::vector<double> square2 = {-118.320, -118.318, 34.040, 34.039};
+  auto sub2 = m.GetSubgraph(square2);
+  bool result2 = m.CycleDetection(sub2, square2);
+  EXPECT_EQ(result2, false);
+
+  // Test case 3
+  std::vector<double> square3 = {-118.250, -118.235, 34.025, 34.000};
+  auto sub3 = m.GetSubgraph(square3);
+  bool result3 = m.CycleDetection(sub3, square3);
+  EXPECT_EQ(result3, true);
+}
