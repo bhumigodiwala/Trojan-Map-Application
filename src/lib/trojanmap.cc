@@ -425,8 +425,23 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
  */
 std::vector<std::string> TrojanMap::ReadLocationsFromCSVFile(std::string locations_filename){
   std::vector<std::string> location_names_from_csv;
+
+ std::fstream fin;
+  fin.open(locations_filename, std::ios::in);
+  std::string line;
+
+  getline(fin, line);
+  while (getline(fin, line)) {
+    line.erase(std::remove(line.begin(),line.end(),','), line.end());
+    if(line!="")
+      location_names_from_csv.push_back(line);
+  }
+  fin.close();
+
   return location_names_from_csv;
 }
+
+
 
 /**
  * Given CSV filenames, it read and parse dependencise data from CSV file,
@@ -437,8 +452,40 @@ std::vector<std::string> TrojanMap::ReadLocationsFromCSVFile(std::string locatio
  */
 std::vector<std::vector<std::string>> TrojanMap::ReadDependenciesFromCSVFile(std::string dependencies_filename){
   std::vector<std::vector<std::string>> dependencies_from_csv;
+
+  std::fstream fin;
+  fin.open(dependencies_filename, std::ios::in);
+  std::string line;
+
+  getline(fin, line);
+  while (getline(fin, line)) {
+    std::string firstpos , secondpos;
+    auto pos = line.find(',');
+    if(pos==-1 || pos==0 || pos==line.size()-1) continue;
+    firstpos = line.substr(0,pos);
+    secondpos = line.substr(pos+1);
+    secondpos.erase(std::remove(secondpos.begin(),secondpos.end(),','), secondpos.end());
+    dependencies_from_csv.push_back({firstpos,secondpos});
+  }
+  fin.close();
+
   return dependencies_from_csv;
 }
+
+bool TrojanMap::DeliveringTrojan_helper(
+  std::string &location,
+  std::unordered_map<std::string,std::vector<std::string>> &adjacencies,
+  std::unordered_map<std::string,int> &seen,std::vector<std::string> &result){
+  seen[location] = 1;
+  for(std::string &adj:adjacencies[location]){
+    if(seen[adj]==1 || (seen[adj]==0 && DeliveringTrojan_helper(adj,adjacencies,seen,result)==false))
+      return false;
+  }
+  seen[location] = 2;
+  result.push_back(location);
+  return true;
+}
+
 
 /**
  * DeliveringTrojan: Given a vector of location names, it should return a sorting of nodes
@@ -450,9 +497,32 @@ std::vector<std::vector<std::string>> TrojanMap::ReadDependenciesFromCSVFile(std
  */
 std::vector<std::string> TrojanMap::DeliveringTrojan(std::vector<std::string> &locations,
                                                      std::vector<std::vector<std::string>> &dependencies){
+  // std::vector<std::string> result;
+  // return result;       
+  std::unordered_map<std::string,std::vector<std::string>> adjacencies;
+  for(auto &location:locations){
+    adjacencies[location] = std::vector<std::string>();
+  }
+  for(auto &edge:dependencies){
+    if(adjacencies.count(edge[0])==0 || adjacencies.count(edge[1])==0)
+      return {};
+    adjacencies[edge[0]].push_back(edge[1]);
+  }
+
   std::vector<std::string> result;
-  return result;                                                     
+  std::unordered_map<std::string,int> seen;
+  for(auto &location:locations){
+    seen[location] = 0;
+  }
+  for(auto &location:locations){
+    if(seen[location]==0 && !DeliveringTrojan_helper(location,adjacencies,seen,result))
+      return {};
+  }
+  std::reverse(result.begin(),result.end());
+
+  return result;                                              
 }
+
 
 /**
  * inSquare: Give a id retunr whether it is in square or not.

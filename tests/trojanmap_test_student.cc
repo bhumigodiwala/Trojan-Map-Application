@@ -257,3 +257,28 @@ TEST(TrojanMapTest, CycleDetection) {
   bool result3 = m.CycleDetection(sub3, square3);
   EXPECT_EQ(result3, true);
 }
+
+// Test cycle detection function
+TEST(TrojanMapTest, TopologicalSort) {
+  TrojanMap m;
+  
+  std::vector<std::string> location_names1 = {"Trader Joes","Starbucks","LATTC/Ortho Institute"};
+  std::vector<std::vector<std::string>> dependencies1 = {{"Trader Joes","Starbucks"}, {"Trader Joes","LATTC/Ortho Institute"}, {"Starbucks","LATTC/Ortho Institute"}};
+  auto result1 = m.DeliveringTrojan(location_names1, dependencies1);
+  std::vector<std::string> gt1 ={"Trader Joes","Starbucks","LATTC/Ortho Institute"};
+  EXPECT_EQ(result1, gt1);
+
+  std::vector<std::string> location_names2 = {"Ralphs","Starbucks","LATTC/Ortho Institute"};
+  std::vector<std::vector<std::string>> dependencies2 = {{"Ralphs","Starbucks"}, {"Ralphs","LATTC/Ortho Institute"}, {"Starbucks","LATTC/Ortho Institute"}};
+  auto result2 = m.DeliveringTrojan(location_names2, dependencies2);
+  std::vector<std::string> gt2 ={"Ralphs","Starbucks","LATTC/Ortho Institute"};
+  EXPECT_EQ(result2, gt2);
+
+  std::vector<std::string> location_names3 = {"Trader Joes","Starbucks","Five Guys"};
+  std::vector<std::vector<std::string>> dependencies3 = {{"Trader Joes","Starbucks"}, {"Trader Joes","Five Guys"}, {"Starbucks","Five Guys"}};
+  auto result3 = m.DeliveringTrojan(location_names3, dependencies3);
+  std::vector<std::string> gt3 ={"Trader Joes","Starbucks","Five Guys"};
+  EXPECT_EQ(result3, gt3);
+}
+
+

@@ -127,6 +127,10 @@ class TrojanMap {
   //----------------------------------------------------- User-defined functions
 bool CycleDetection_helper(const std::string &currID,std::unordered_map<std::string,int> &seen,const std::string &parentID);
 
+bool DeliveringTrojan_helper(
+  std::string &location,
+  std::unordered_map<std::string,std::vector<std::string>> &adjacencies,
+  std::unordered_map<std::string,int> &seen,std::vector<std::string> &result);
 };
 
 #endif
