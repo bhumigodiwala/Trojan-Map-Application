@@ -258,7 +258,7 @@ TEST(TrojanMapTest, CycleDetection) {
   EXPECT_EQ(result3, true);
 }
 
-// Test cycle detection function
+// Test topological sort function
 TEST(TrojanMapTest, TopologicalSort) {
   TrojanMap m;
   
