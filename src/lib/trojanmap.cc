@@ -284,25 +284,22 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
       }
       
       
-    path.insert(path.begin(), src_id);//add those parent nodes in the front of x vector (a.k.a src_node position)
+    path.insert(path.begin(), src_id);
       return path;
     }
-    //if we didn't find it
-    visited[curr_node] = true; //assume curr_node has been visited
-
-    for (const std::string &adj_node : curr_node->neighbors) { //loop through and find all adjacent nodes of curr_node
-      Node *dest_node = &data[adj_node]; //Extract every nodes that points to the location of curr_node from the map, "data"
-      // dest_node --> adj_node
-      if (visited[dest_node]) { //If the node is visited
-        continue; //skip the visited node and continue
+    visited[curr_node] = true; 
+    for (const std::string &adj_node : curr_node->neighbors) { 
+      Node *dest_node = &data[adj_node]; 
+      if (visited[dest_node]) { 
+        continue; 
       }
       
-      double weight = CalculateDistance(curr_node->id, dest_node->id); //weight(curr_node, dest_node)
-      if (costs[dest_node] > costs[curr_node] + weight) { //If there is a shorter path to dest_node through curr_node
-        from[dest_node] = curr_node->id;//updating its prev_nodes of shortest path (a.k.a minimum costs)
+      double weight = CalculateDistance(curr_node->id, dest_node->id); 
+      if (costs[dest_node] > costs[curr_node] + weight) { 
+        from[dest_node] = curr_node->id;
         
-        costs[dest_node] = costs[curr_node] + weight; //Updating current distance from curr_node to dest_node
-        queue.push(dest_node); //push it into the queue
+        costs[dest_node] = costs[curr_node] + weight; 
+        queue.push(dest_node); 
       }
     }
   }
@@ -320,8 +317,6 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Dijkstra(
  */
 std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
     std::string location1_name, std::string location2_name){
-  // std::vector<std::string> path;
-  // return path;
 
   std::string src_id, dest_id;
   for(auto node: data) {
@@ -353,15 +348,13 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
       Node curr_node = data[node_dist.first];
       for(std::string &adj : curr_node.neighbors){
         if(data.count(adj) == 0)
-          continue; // In case there is no such Node, invalid data point
+          continue; 
 
-        // Generate key for the Link Weight Map
         std::string weight_map_key = curr_node.id;
         weight_map_key.append(",");
         weight_map_key.append(adj);
 
         if(weights_matrix.count(weight_map_key)==0){
-          // Generate another key for the Link Weight Map
           std::string key_alt = adj;
           key_alt.append(",");
           key_alt.append(curr_node.id);
@@ -500,8 +493,6 @@ bool TrojanMap::DeliveringTrojan_helper(
  */
 std::vector<std::string> TrojanMap::DeliveringTrojan(std::vector<std::string> &locations,
                                                      std::vector<std::vector<std::string>> &dependencies){
-  // std::vector<std::string> result;
-  // return result;       
   std::unordered_map<std::string,std::vector<std::string>> adjacencies;
   for(auto &location:locations){
     adjacencies[location] = std::vector<std::string>();
@@ -559,7 +550,6 @@ bool TrojanMap::inSquare(std::string id, std::vector<double> &square) {
  * @return {std::vector<std::string>} subgraph  : list of location ids in the square
  */
 std::vector<std::string> TrojanMap::GetSubgraph(std::vector<double> &square) {
-  // include all the nodes in subgraph
   std::vector<std::string> subgraph;
 
   for (auto it = data.begin(); it != data.end(); ++it)
@@ -628,7 +618,6 @@ std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::
  * 
  */
 void TrojanMap::CreateGraphFromCSVFile() {
-  // Do not change this function
   std::fstream fin;
   fin.open("src/lib/data.csv", std::ios::in);
   std::string line, word;
