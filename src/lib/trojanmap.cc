@@ -608,8 +608,26 @@ bool TrojanMap::CycleDetection(std::vector<std::string> &subgraph, std::vector<d
  * @param {int} k: search numbers
  * @return {std::vector<std::string>}: location name that meets the requirements
  */
-std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::string name, double r, int k) {
+std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::string name, double r, int k)
+{
   std::vector<std::string> res;
+
+  for (auto it = data.begin(); it != data.end(); ++it)
+  {
+    if (it->second.name == name)
+      continue;
+    auto att = it->second.attributes;
+    for (auto ite_i = att.begin(); ite_i != att.end(); ++ite_i)
+    {
+      if ((*ite_i == attributesName) && (CalculateDistance(it->first, GetID(name)) < r))
+      {
+        res.push_back(it->first);
+      }
+
+      if (res.size() > k)
+        break;
+    }
+  }
   return res;
 }
 
