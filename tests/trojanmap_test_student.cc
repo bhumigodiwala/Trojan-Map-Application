@@ -281,4 +281,128 @@ TEST(TrojanMapTest, TopologicalSort) {
   EXPECT_EQ(result3, gt3);
 }
 
+// Phase 3
+// Test TSP function
 
+//Brute Force
+TEST(TrojanMapTest, TSP1) {
+  TrojanMap m;
+  
+  std::vector<std::string> input1{"8566227755","6276439468","6788498757","7197964033","6805221420","123656718","6807927346","7197964012"}; // Input location ids 
+  auto result1 = m.TravellingTrojan_Brute_force(input1);
+  std::cout << "My path length: "  << result1.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt1{"8566227755","6276439468","6788498757","6805221420","7197964033","7197964012","6807927346","123656718","8566227755"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt1) << "miles" << std::endl; // Print the gt path lengths
+  bool flag1 = false;
+  if (gt1 == result1.second[result1.second.size()-1]) // clockwise
+    flag1 = true;
+  std::reverse(gt1.begin(),gt1.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt1 == result1.second[result1.second.size()-1]) 
+    flag1 = true;
+  
+  EXPECT_EQ(flag1, true);
+
+
+
+
+
+  std::vector<std::string> input2{"1836112325","2871078026","1865156358","6808311401","6817165995"}; // Input location ids 
+  auto result2 = m.TravellingTrojan_Brute_force(input2);
+  std::cout << "My path length: "  << result2.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt2{"1836112325","1865156358","2871078026","6808311401","6817165995","1836112325"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt2) << "miles" << std::endl; // Print the gt path lengths
+  bool flag2 = false;
+  if (gt2 == result2.second[result2.second.size()-1]) // clockwise
+    flag2 = true;
+  std::reverse(gt2.begin(),gt2.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt2 == result2.second[result2.second.size()-1]) 
+    flag2 = true;
+  
+  EXPECT_EQ(flag2, true);
+
+
+
+
+
+  std::vector<std::string> input3{"1855173106","4096366481","2193435046","63043854","8179059377","122607557","1838283858","7432340645","6813405249","123338991"}; // Input location ids 
+  auto result3 = m.TravellingTrojan_Brute_force(input3);
+  std::cout << "My path length: "  << result3.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt3{"1855173106","7432340645","63043854","123338991","6813405249","2193435046","8179059377","122607557","1838283858","4096366481","1855173106"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt3) << "miles" << std::endl; // Print the gt path lengths
+  bool flag3 = false;
+  if (gt3 == result3.second[result3.second.size()-1]) // clockwise
+    flag3 = true;
+  std::reverse(gt3.begin(),gt3.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt3 == result3.second[result3.second.size()-1]) 
+    flag3 = true;
+  
+  EXPECT_EQ(flag3, true);
+}
+
+//BackTracking
+TEST(TrojanMapTest, TSP2) {
+  TrojanMap m;
+  
+  std::vector<std::string> input1{"8566227755","6276439468","6788498757","7197964033","6805221420","123656718","6807927346","7197964012"}; // Input location ids 
+  auto result1 = m.TravellingTrojan_Backtracking(input1);
+  std::cout << "My path length: "  << result1.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt1{"8566227755","6276439468","6788498757","6805221420","7197964033","7197964012","6807927346","123656718","8566227755"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt1) << "miles" << std::endl; // Print the gt path lengths
+  bool flag1 = false;
+  if (gt1 == result1.second[result1.second.size()-1]) // clockwise
+    flag1 = true;
+  std::reverse(gt1.begin(),gt1.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt1 == result1.second[result1.second.size()-1]) 
+    flag1 = true;
+  
+  EXPECT_EQ(flag1, true);
+
+
+
+  std::vector<std::string> input2{"1836112325","2871078026","1865156358","6808311401","6817165995"}; // Input location ids 
+  auto result2 = m.TravellingTrojan_Backtracking(input2);
+  std::cout << "My path length: "  << result2.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt2{"1836112325","1865156358","2871078026","6808311401","6817165995","1836112325"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt2) << "miles" << std::endl; // Print the gt path lengths
+  bool flag2 = false;
+  if (gt2 == result2.second[result2.second.size()-1]) // clockwise
+    flag2 = true;
+  std::reverse(gt2.begin(),gt2.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt2 == result2.second[result2.second.size()-1]) 
+    flag2 = true;
+  
+  EXPECT_EQ(flag2, true);
+
+
+
+
+  std::vector<std::string> input3{"1855173106","4096366481","2193435046","63043854","8179059377","122607557","1838283858","7432340645","6813405249","123338991"}; // Input location ids 
+  auto result3 = m.TravellingTrojan_Backtracking(input3);
+  std::cout << "My path length: "  << result3.first << "miles" << std::endl; // Print the result path lengths
+  std::vector<std::string> gt3{"1855173106","7432340645","63043854","123338991","6813405249","2193435046","8179059377","122607557","1838283858","4096366481","1855173106"}; // Expected order
+  std::cout << "GT path length: "  << m.CalculatePathLength(gt3) << "miles" << std::endl; // Print the gt path lengths
+  bool flag3 = false;
+  if (gt3 == result3.second[result3.second.size()-1]) // clockwise
+    flag3 = true;
+  std::reverse(gt3.begin(),gt3.end()); // Reverse the expected order because the counterclockwise result is also correct
+  if (gt3 == result3.second[result3.second.size()-1]) 
+    flag3 = true;
+  
+  EXPECT_EQ(flag3, true);
+}
+
+TEST(TrojanMapTest, FindNearby) {
+  TrojanMap m;
+  
+  auto result1 = m.FindNearby("bank", "Bank of America", 10, 10);
+  std::vector<std::string> ans1{"9591449441", "9591449465"};
+  EXPECT_EQ(result1, ans1);
+
+  auto result2 = m.FindNearby("fast_food", "Cava", 10, 10);
+  std::vector<std::string> ans2{"1759017528", "1759017530", "1759017531", "3088547686", "3577173161", "4547476733", "4577908517", "4927493958", "5567724155", "5567733799", "5695236164", "6215199559", "6216810098", "6278441244", "6278441273", "6278441392", "6278441399", "6279600813", "6808450115", "732641023", "9591449455"};
+  EXPECT_EQ(result2, ans2);
+
+  auto result3 = m.FindNearby("hotel", "USC Hotel", 10, 10);
+  std::vector<std::string> ans3{"9051883397"};
+  EXPECT_EQ(result3, ans3);
+}

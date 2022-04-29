@@ -139,8 +139,6 @@ bool DeliveringTrojan_helper(
     std::vector<int> &current_path,
     double currDist,
     std::unordered_set<int> &seen, bool is_bruteforce);
-    std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_3opt(
-      std::vector<std::string> &location_ids);
 };
 
 #endif
