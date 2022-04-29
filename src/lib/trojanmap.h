@@ -131,6 +131,16 @@ bool DeliveringTrojan_helper(
   std::string &location,
   std::unordered_map<std::string,std::vector<std::string>> &adjacencies,
   std::unordered_map<std::string,int> &seen,std::vector<std::string> &result);
+  void TravellingTrojan_helper(
+    std::vector<std::string> &location_ids,
+    std::vector<std::vector<double>> &weights,
+    std::vector<std::vector<std::string>> &paths,
+    double &minDist,
+    std::vector<int> &current_path,
+    double currDist,
+    std::unordered_set<int> &seen, bool is_bruteforce);
+    std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_3opt(
+      std::vector<std::string> &location_ids);
 };
 
 #endif

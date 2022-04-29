@@ -384,8 +384,50 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
   std::reverse(path.begin(), path.end());
   return path;
   
+void TrojanMap::TravellingTrojan_helper(
+    std::vector<std::string> &location_ids,
+    std::vector<std::vector<double>> &weights,
+    std::vector<std::vector<std::string>> &paths,
+    double &minDist,
+    std::vector<int> &current_path,
+    double currDist,
+    std::unordered_set<int> &seen, bool is_bruteforce)
+{
+
+  // Arrive at the leaf
+  if (current_path.size() == location_ids.size())
+  {
+    double finalDist = currDist + weights[current_path.back()][0];
+    if (finalDist < minDist)
+    {
+      std::vector<std::string> tempPath;
+      for (auto i : current_path)
+        tempPath.push_back(location_ids[i]);
+      tempPath.push_back(location_ids[0]);
+      paths.push_back(std::move(tempPath));
+      minDist = finalDist;
+    }
 }
 
+  // Early proning
+  if (!is_bruteforce){
+  if (currDist >= minDist)
+    return;
+    }
+
+  for (auto i = 1; i < location_ids.size(); i++)
+  {
+    if (seen.count(i) == 0)
+    {
+      seen.insert(i);
+      double deltaDist = weights[current_path.back()][i];
+      current_path.push_back(i);
+      TravellingTrojan_helper(location_ids, weights, paths, minDist, current_path, currDist + deltaDist, seen, is_bruteforce);
+      current_path.pop_back();
+      seen.erase(i);
+    }
+  }
+}
 
 /**
  * Travelling salesman problem: Given a list of locations, return the shortest
@@ -395,15 +437,56 @@ std::vector<std::string> TrojanMap::CalculateShortestPath_Bellman_Ford(
  * @return {std::pair<double, std::vector<std::vector<std::string>>} : a pair of total distance and the all the progress to get final path
  */
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_Brute_force(
-                                    std::vector<std::string> location_ids) {
+    std::vector<std::string> location_ids){
   std::pair<double, std::vector<std::vector<std::string>>> records;
+  if (location_ids.size() < 2)
   return records;
+
+  std::vector<std::vector<double>> weight_tsp(location_ids.size(), std::vector<double>(location_ids.size()));
+  for (auto i = 0; i < location_ids.size(); i++)
+  {
+    for (auto j = i + 1; j < location_ids.size(); j++)
+    {
+      weight_tsp[i][j] = CalculateDistance(location_ids[i], location_ids[j]);
+      weight_tsp[j][i] = weight_tsp[i][j];
+    }
+  }
+  std::vector<std::vector<std::string>> paths;
+  double minDist = DBL_MAX;
+  std::vector<int> current_path;
+  std::unordered_set<int> seen;
+  current_path.push_back(0);
+  seen.insert(0);
+
+  TravellingTrojan_helper(location_ids, weight_tsp, paths, minDist, current_path, 0, seen, true);
+  return std::pair<double, std::vector<std::vector<std::string>>>(minDist, paths);
 }
 
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_Backtracking(
-                                    std::vector<std::string> location_ids) {
+    std::vector<std::string> location_ids)
+{
   std::pair<double, std::vector<std::vector<std::string>>> records;
+  if (location_ids.size() < 2)
   return records;
+
+  std::vector<std::vector<double>> weight_tsp(location_ids.size(), std::vector<double>(location_ids.size()));
+  for (auto i = 0; i < location_ids.size(); i++)
+  {
+    for (auto j = i + 1; j < location_ids.size(); j++)
+    {
+      weight_tsp[i][j] = CalculateDistance(location_ids[i], location_ids[j]);
+      weight_tsp[j][i] = weight_tsp[i][j];
+    }
+  }
+  std::vector<std::vector<std::string>> paths;
+  double minDist = DBL_MAX;
+  std::vector<int> current_path;
+  std::unordered_set<int> seen;
+  current_path.push_back(0);
+  seen.insert(0);
+
+  TravellingTrojan_helper(location_ids, weight_tsp, paths, minDist, current_path, 0, seen, false);
+  return std::pair<double, std::vector<std::vector<std::string>>>(minDist, paths);
 }
 
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_2opt(
