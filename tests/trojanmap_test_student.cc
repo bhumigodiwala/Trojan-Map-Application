@@ -438,7 +438,7 @@ TEST(TrojanMapTest, TSP3) {
   bool flag3 = false;
   if (gt3 == result3.second[result3.second.size()-1]) // clockwise
     flag3 = true;
-  std::reverse(gt3.begin(),gt3.end()); // Reverse the expected order because the counterclockwise result is also correct
+  std::reverse(gt3.begin(),gt3.end()); 
   if (gt3 == result3.second[result3.second.size()-1]) 
     flag3 = true;
   

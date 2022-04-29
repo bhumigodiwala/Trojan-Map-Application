@@ -531,9 +531,44 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_2opt(
       std::vector<std::string> location_ids){
 
-  std::pair<double, std::vector<std::vector<std::string>>> records;
+   std::pair<double, std::vector<std::vector<std::string>>> records;
   if (location_ids.size() < 2)
-  return records;
+    return records;
+
+  std::vector<std::vector<std::string>> paths;
+  std::vector<std::string> current_path;
+  for (std::string &location : location_ids)
+    current_path.push_back(location);
+  current_path.push_back(location_ids[0]);
+  double minDist = CalculatePathLength(current_path);
+  paths.push_back(current_path);
+
+  bool stop = false;
+  while (!stop)
+  {
+    stop = true;
+    // current_path has at least three nodes
+    for (auto i = 1; i < current_path.size() - 1; i++)
+    {
+      for (auto k = i + 1; k < current_path.size(); k++)
+      {
+        std::reverse(current_path.begin() + i, current_path.begin() + k);
+        double currDist = CalculatePathLength(current_path);
+        if (currDist < minDist)
+        {
+          minDist = currDist;
+          paths.push_back(current_path);
+          stop = false;
+        }
+        else
+        {
+          // Recover the change on the original path
+          std::reverse(current_path.begin() + i, current_path.begin() + k);
+        }
+      }
+    }
+  }
+  return std::pair<double, std::vector<std::vector<std::string>>>(minDist, paths);
 }
 
 /**
