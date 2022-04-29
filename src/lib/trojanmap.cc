@@ -611,6 +611,9 @@ bool TrojanMap::CycleDetection(std::vector<std::string> &subgraph, std::vector<d
 std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::string name, double r, int k)
 {
   std::vector<std::string> res;
+  std::priority_queue <  std::pair< int, std::string > , 
+                    std::vector<std::pair< int, std::string >> , 
+                        std::greater<std::pair< int, std::string >>  > pq;
 
   for (auto it = data.begin(); it != data.end(); ++it)
   {
@@ -619,14 +622,28 @@ std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::
     auto att = it->second.attributes;
     for (auto ite_i = att.begin(); ite_i != att.end(); ++ite_i)
     {
-      if ((*ite_i == attributesName) && (CalculateDistance(it->first, GetID(name)) < r))
+      int d = CalculateDistance(it->first, GetID(name)) < r;
+      if ((*ite_i == attributesName) && (d < r))
       {
-        res.push_back(it->first);
+        std::pair<int, std::string> tt;
+        tt.first = d;
+        tt.second = it->first;
+          pq.push(tt);
+        
       }
 
-      if (res.size() > k)
-        break;
+      
     }
+  }
+
+  while (pq.empty() == false)
+  {
+      
+        auto ele =  pq.top() ;
+        res.push_back(ele.second);
+        if (res.size() >= k)
+        break;
+        pq.pop(); 
   }
   return res;
 }
