@@ -530,7 +530,9 @@ std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTr
 
 std::pair<double, std::vector<std::vector<std::string>>> TrojanMap::TravellingTrojan_2opt(
       std::vector<std::string> location_ids){
+
   std::pair<double, std::vector<std::vector<std::string>>> records;
+  if (location_ids.size() < 2)
   return records;
 }
 

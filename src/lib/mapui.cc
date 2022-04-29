@@ -943,6 +943,171 @@ void MapUI::DynamicPrintMenu() {
     break;
   }
 
+  
+  case '5':
+  {
+    menu =
+        "**************************************************************\n"
+        "* 5. Cycle Detection                                          \n"
+        "**************************************************************\n";
+    y = ui.ScrollLongText(menu);
+    menu = "Please input the left bound longitude(between -118.320 and -118.250):";
+    y = ui.ScrollLongText(menu, 10, y);
+
+    std::vector<double> square;
+    char ip1[100];
+    scanw("%s",ip1);
+    square.push_back(atof(ip1));
+
+    menu = "Please input the right bound longitude(between -118.320 and -118.250):";
+    y = ui.ScrollLongText(menu, 10, y);
+
+    char ip2[100];
+    scanw("%s",ip2);
+    square.push_back(atof(ip2));
+
+
+    menu = "Please input the upper bound latitude(between 34.000 and 34.040):";
+    y = ui.ScrollLongText(menu, 10, y);
+
+    char ip3[100];
+    scanw("%s",ip3);
+    square.push_back(atof(ip3));
+
+    menu = "Please input the lower bound latitude(between 34.000 and 34.040)::";
+    y = ui.ScrollLongText(menu, 10, y);
+
+    char ip4[100];
+    scanw("%s",ip4);
+    square.push_back(atof(ip4));
+
+    auto subgraph = map.GetSubgraph(square);
+    PlotPointsandEdges(subgraph, square);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    auto results = map.CycleDetection(subgraph, square);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    clear();
+    menu = "*************************Results******************************";
+    y = ui.ScrollLongText(menu);
+    if (results == true) {
+      y = ui.ScrollLongText("there exists a cycle in the subgraph ");
+    } else {
+      y = ui.ScrollLongText("there exist no cycle in the subgraph");
+    }
+    menu = "**************************************************************\n";
+    y=ui.ScrollLongText(menu,10,y);
+    y=ui.ScrollLongText("Time taken by function: " + std::to_string(duration.count()/1000) + " ms",10,y);
+    y=ui.ScrollLongText("Press any keys to continue.",10,y);
+    getchar();
+    clear();
+    DynamicPrintMenu();
+    break;
+  }
+
+  case '6':
+  {
+    menu =
+        "**************************************************************\n"
+        "* 6. Topological Sort                                         \n"
+        "**************************************************************\n";
+    y = ui.ScrollLongText(menu);
+    menu = "Please input the locations filename:";
+    y = ui.ScrollLongText(menu, 10, y);
+    char locations_filename[1000];
+    scanw("%s",locations_filename);
+
+    menu = "Please input the dependencies filename:";
+    y = ui.ScrollLongText(menu, 10, y);
+    char dependencies_filename[1000];
+    scanw("%s",dependencies_filename);
+
+    // Read location names from CSV file
+    std::vector<std::string> location_names;
+    if (strcmp(locations_filename,"a") == 0) 
+      location_names = {"Ralphs", "KFC", "Chick-fil-A"};
+    else
+      location_names = map.ReadLocationsFromCSVFile(locations_filename);
+    
+    // Read dependencies from CSV file
+    std::vector<std::vector<std::string>> dependencies;
+    if (strcmp(dependencies_filename,"a") == 0)
+      dependencies = {{"Ralphs","Chick-fil-A"}, {"Ralphs","KFC"}, {"Chick-fil-A","KFC"}};
+    else
+      dependencies = map.ReadDependenciesFromCSVFile(dependencies_filename);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    auto result = map.DeliveringTrojan(location_names, dependencies);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    clear();
+    menu = "*************************Results******************************\n";
+    y = ui.ScrollLongText(menu);
+    if (result.size() > 0) {
+      y = ui.ScrollLongText( "\nTopological Sorting Results:\n" ,10,y);
+      for (auto x : result) y = ui.ScrollLongText(x, 10, y);
+      std::vector<std::string> node_ids;
+      for (auto x: result) node_ids.push_back(map.GetID(x));
+      PlotPointsOrder(node_ids);
+    } else {
+      y = ui.ScrollLongText("There is no topological sort for the given graph.\n", 10, y);
+    }
+    menu = "\n**************************************************************\n";
+    y=ui.ScrollLongText(menu, 10, y);
+    y=ui.ScrollLongText("Time taken by function: " + std::to_string(duration.count()/1000) + " ms",10,y);
+    y=ui.ScrollLongText("Press any keys to continue.",10,y);
+    getchar();
+    clear();
+    DynamicPrintMenu();
+    break;
+  }
+
+  case '7':
+  {
+    menu =
+        "**************************************************************\n"
+        "* 7. Find Nearby                                              \n"
+        "**************************************************************\n";
+    y = ui.ScrollLongText(menu);
+    menu = "Please input the attribute:";
+    y = ui.ScrollLongText(menu, 10, y);
+    char attribute[100];
+    scanw("%s",attribute);
+
+
+    menu = "Please input the locations:";
+    y = ui.ScrollLongText(menu, 10, y);
+    char origin[100];
+    scanw("%s",origin);
+
+    menu = "Please input radius r:";
+    y = ui.ScrollLongText(menu, 10, y);
+    char r[100];
+    scanw("%s",r);
+
+    menu = "Please input number k:";
+    y = ui.ScrollLongText(menu, 10, y);
+    char k[100];
+    scanw("%s",k);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    auto results = map.FindNearby(attribute, origin, atoi(r), std::stoi(k));
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    clear();
+    menu = "*************************Results******************************";
+    y = ui.ScrollLongText(menu);
+    y = ui.ScrollLongText("Find Nearby Results:", 10, y);
+    int cnt = 1;
+    for (auto x : results) { 
+      y = ui.ScrollLongText( std::to_string( cnt )+ " " + map.data[x].name, 10, y);
+      cnt++;
+    }
+    PlotPointsLabel(results, map.GetID(origin));
+    menu = "**************************************************************\n";
+    y=ui.ScrollLongText(menu,10,y);
+    y=ui.ScrollLongText("Time taken by function: " + std::to_string(duration.count()/1000) + " ms",10,y);
     y=ui.ScrollLongText("Press any keys to continue.",10,y);
     getchar();
     clear();
