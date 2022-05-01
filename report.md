@@ -151,7 +151,7 @@ std::vector<std::string> CalculateShortestPath_Dijkstra(std::string &location1_n
                                                std::string &location2_name);
 ```
 
-Time Complexity: **O(Vlog(E))** V = vertices, E = Edges in the Graph
+Time Complexity: **O(Elog(V))** where V = vertices, E = Edges in the Graph
 
 - Bellman ford algorithm
 
