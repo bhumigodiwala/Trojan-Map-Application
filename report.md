@@ -72,6 +72,9 @@ std::vector<std::string> Autocomplete(std::string name);
 
 We consider the names of nodes as the locations. Implement a method to type the partial name of the location and return a list of possible locations with partial name as prefix. Please treat uppercase and lower case as the same character.
 
+Time Complexity: **O(n)**
+
+
 Example:
 
 Input: "Chi" \
@@ -88,7 +91,9 @@ Example:
 std::pair<double, double> GetPosition(std::string name);
 ```
 
-Given a location name, return the latitude and longitude. There are no duplicated location names. You should mark the given locations on the map. If the location does not exist, return (-1, -1). The algorithm is case-sensitive.
+Given a location name, return the latitude and longitude. There are no duplicated location names. The algorithm is case-sensitive.
+
+Time Complexity: O(n)	
 
 Example:
 
@@ -131,9 +136,33 @@ Output: "Ralphs"
 
 ## Step 3: CalculateShortestPath between two places
 
+To find the shortest distance between two points in the graph, we used Djikstra, and bellman-ford algorithm. 
+
+- Djikstra algorithm
+
+We implemented using priority queue by visiting all the unvisited nodes and calculating shortest distance of the unvisited node N from the starting node
+While going from the unvisited node N to another node further in the graph, it updates the neighbours.
+If the distance is shorter than the previous path, then the updated node is pushed to the priority queue.
+Priority queue stores the distance value for every node using the concept of minHeap.
+If a path does not exist,  it will return an empty vector.
+
 ```c++
 std::vector<std::string> CalculateShortestPath_Dijkstra(std::string &location1_name,
                                                std::string &location2_name);
+```
+
+Time Complexity: **O(Vlog(E))** V = vertices, E = Edges in the Graph
+
+- Bellman ford algorithm
+
+This algorithm finds the shortest paths between two location by adding one edge at a time while finding path from a node to the starting node.
+It follows early termination that is the algorithm will stop when there is no changes or updates in the path.
+Time complexity: **O(VE)**
+
+
+
+
+```c++
 std::vector<std::string> CalculateShortestPath_Bellman_Ford(std::string &location1_name,
                                                std::string &location2_name);
 ```
@@ -159,12 +188,24 @@ Output: ["2578244375", "5559640911", "6787470571", "6808093910", "6808093913", "
 <p align="center"><img src="img/3_ip.png" alt="Routing" width="500"/></p>
 <p align="center"><img src="img/3op.png" alt="Routing" width="500"/></p>
 <p align="center"><img src="img/3_map_op.png" alt="Routing" width="500"/></p>
+<p align="center"><img src="img/comparison_table.png" alt="TSP videos" width="500"/></p>
 
 
 ## Step 4: The Travelling Trojan Problem (AKA Travelling Salesman!)
 
-In this section, we assume that we are using a UAV which means we can fly directly from 1 point to another point. Given a vector of location ids, assume every location can reach all other locations in the vector (i.e. assume that the vector of location ids is a complete graph).
-It finds the shortest route that covers all the locations exactly once and goes back to the start point.  
+This problem implements the Travelling Salesman Problem (TSP) with three approaches: Brute Force approach, Backtracking, 2-opt approaches
+Algorithms aim at covering all the locations exactly once and going back to the starting point.
+
+- TSP - Brute Force Approach:
+Generates permutation and combination of each pair of nodes and returns the shortest route covering all the locations and returning back to the starting node
+
+- TSP - Backtracking Approach:
+Enhances the implementation with early backtracking as compared to the brute force approach.
+Compares the distance of two nodes larger than the shortest route, the algorithm stops and checks for the next route
+
+- TSP - 2-OPT Approach:
+Main idea is taking a route that crosses over itself and reorder it in a way such that we do not obtain any crossovers in the route
+Reverses the path between two points if the route is shorter compared to the previous one.
 
 We will use the following algorithms:
 
@@ -186,12 +227,6 @@ std::pair<double, std::vector<std::vector<std::string>>> TravellingTrojan_2opt(
 
 We use early backtracking when the current cost is higher than current minimum.
 
-Please report and compare the time spent by these 3 algorithms. 2-opt algorithm may not get the optimal solution. Please show how far your solution is from the optimal solution.
-
-Show the routes on the map. For each intermediate solution, create a new plot. Your final video presentation should include the changes to your solution.
-
-We will randomly select N points in the map and run your program.
-
 
 <p align="center"><img src="img/4.png" alt="4_ip" width="500"/></p>
 <p align="center"><img src="img/4_op.png" alt="4_op" width="500"/></p>
@@ -204,15 +239,26 @@ Early Backtracking
 2 opt
 <p align="center"><img src="img/output0_2opt.gif" alt="TSP videos" width="500"/></p>
 
+
+
+
+<p align="center"><img src="img/comparison_tsp.png" alt="TSP videos" width="500"/></p>
+
+As observed from the results of implementing the above algorithms, 2-OPT method gives us the best feasible route in the minimal time.
+The 2-opt method converges fast but can be easily trapped in local optimums
+
+
 ## Step 5: Cycle Detection
 
 ```c++
 bool CycleDetection(std::vector<double> &square);
 ```
 
-In this section, we use a square-shaped subgraph of the original graph by using four coordinates stored in ```std::vector<double> square```, which follows the order of left, right, upper, and lower bounds. 
+In this section, we use a square-shaped subgraph of the original graph by using four coordinates stored in ```std::vector<double> square```, which follows the order of left, right, upper, and lower bounds, then it tries to determine if there is a cycle path in the that subgraph. If it does, it returns true and reports that path on the map tbu otherwise it returns false.
 
-Then try to determine if there is a cycle path in the that subgraph. If it does, return true and report that path on the map. Otherwise return false.
+
+The algorithms iterates over the region defined by the input coordinates and checks if the node is seen or visited and iteratively checks for any cycles detected within that region.
+Time Complexity: **O(V+E)**
 
 Example 1:
 ```shell
@@ -223,7 +269,7 @@ Output: true
 Here we use the whole original graph as our subgraph. 
 <p align="center"><img src="img/5_cycle.png" alt="TSP" width="500"/></p>
 <p align="center"><img src="img/5_cycle_op.png" alt="TSP" width="500"/></p>
-<p align="center"><img src="img/cycle1.png" alt="TSP" width="500"/></p>
+<p align="center"><img src="img/5_c_subgraph.png" alt="TSP" width="500"/></p>
 
 
 Example 2:
@@ -272,8 +318,12 @@ Output: Ralphs  -> Chick-fil-A -> KFC
 
 ## Step 7: Find Nearby
 
-Given a attribute name C, a location name L and a number r and k, this finds at most k locations in attribute C on the map near L(do not include L) with the range of r and returns a vector of string ids. The order of locations should from
-nearest to farthest.
+Given a attribute name C, a location name L and a number r and k, this function finds at most k locations in attribute C on the map near L(do not include L) with the range of r and returns a vector of string ids.
+
+IT returns a list of locations based on the attributes and the nearby input location within a particular radius from the input location
+The output locations are ordered from nearest to farthest order. 
+Time Complexity: **O(mn)**
+
 
 ```c++
 std::vector<std::string> TrojanMap::FindNearby(std::string attributesName, std::string name, double r, int k);
@@ -287,4 +337,16 @@ All attributes
 <p align="center"><img src="img/7ip.png" alt="Nearby" width="500"/></p>
 <p align="center"><img src="img/7op.png" alt="Nearby" width="500"/></p>
 <p align="center"><img src="img/7_map_op.png" alt="Nearby" width="500"/></p>
+
+
+## Summary and Lessons Learned
+
+- We learned the use of differet data structures for solving real world problem. 
+
+- In addition to that, we learned how to implement various graph algorithms like DFS, Djisktra and Bellman ford algorithm for finding the shortest path between two nodes, and 2opt algorithm for travelling salesman problem.
+
+- We also optimized the brute force algorithm by incorporating backtracking. 
+- We also learned to use various functions using the C++ STL libraries. 
+
+
 
