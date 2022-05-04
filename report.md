@@ -5,6 +5,8 @@
 Smeet Dhakecha, Bhumi Godiwala <br>
 dhakecha@usc.edu, godiwala@usc.edu
 
+Presentation Link: https://docs.google.com/presentation/d/12GRSB-W5CZfBvP3-E08cKUKnPMd-TeNc/edit?usp=sharing&ouid=112044772321190832239&rtpof=true&sd=true
+
 ## TrojanMap
 
 This project focuses on using data structures in C++ and implementing various graph algorithms to build a map application.
